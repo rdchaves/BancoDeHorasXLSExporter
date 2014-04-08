@@ -33,7 +33,7 @@ import rodrigo.chaves.hoursbankconverter.model.Day;
 import rodrigo.chaves.hoursbankconverter.model.Month;
 
 
-public class ExcelExporter<T> implements Exporter<T> {
+public class ExcelConverter<T> implements Converter<T> {
 
 	private static final String COLUMN_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	protected WritableCellFormat CELL_DATE_FORMAT = new WritableCellFormat(new WritableFont(
@@ -51,7 +51,7 @@ public class ExcelExporter<T> implements Exporter<T> {
 	protected WritableCellFormat CELL_FORMAT = new WritableCellFormat(new WritableFont(
 			WritableFont.ARIAL, 10));
 
-	public ExcelExporter() throws Exception {
+	public ExcelConverter() throws Exception {
 		CELL_DATE_FORMAT.setAlignment(Alignment.CENTRE);
 		CELL_DATE_FORMAT.setBackground(Colour.GRAY_25);
 		CELL_DATE_FORMAT.setBorder(Border.ALL, BorderLineStyle.THIN);
@@ -77,11 +77,16 @@ public class ExcelExporter<T> implements Exporter<T> {
 		CELL_TOTAL_TIME_FORMAT.setBorder(Border.ALL, BorderLineStyle.THIN);
 	}
 
-	public File export(List<T> checkpoints) throws Exception {
+	@Override
+	public File convert(List<T> checkpoints) throws Exception {
+	    return convert(File.createTempFile("Banco_de_Horas", ".xls"), checkpoints);
+	}
+	
+	@Override
+	public File convert(File file, List<T> checkpoints) throws Exception {
 
 		int sheetIndex = 0;
 		final Calendar monthAux = Calendar.getInstance();
-		File file = File.createTempFile("Banco_de_Horas", ".xls");
 		WorkbookSettings wbSettings = new WorkbookSettings();
 		wbSettings.setLocale(new Locale("pt", "BR"));
 		wbSettings.setExcelRegionalSettings("pt_BR");

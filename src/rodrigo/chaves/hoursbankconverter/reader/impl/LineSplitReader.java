@@ -11,6 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 
 import rodrigo.chaves.hoursbankconverter.reader.Reader;
+import br.eti.rdchaves.bancodehorasxlsexporter.business.exception.CSVReadFailException;
 
 public class LineSplitReader implements Reader<Date> {
 
@@ -35,6 +36,8 @@ public class LineSplitReader implements Reader<Date> {
 					}
 				}
 			}
+		} catch (Exception e) {
+			throw new CSVReadFailException("Fail to read file: wrong format", e);
 		} finally {
 			IOUtils.closeQuietly(reader);
 		}
