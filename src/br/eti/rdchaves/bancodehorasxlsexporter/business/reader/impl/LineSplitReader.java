@@ -1,4 +1,4 @@
-package rodrigo.chaves.hoursbankconverter.reader.impl;
+package br.eti.rdchaves.bancodehorasxlsexporter.business.reader.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,8 +10,8 @@ import java.util.TimeZone;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 
-import rodrigo.chaves.hoursbankconverter.reader.Reader;
 import br.eti.rdchaves.bancodehorasxlsexporter.business.exception.CSVReadFailException;
+import br.eti.rdchaves.bancodehorasxlsexporter.business.reader.Reader;
 
 public class LineSplitReader implements Reader<Date> {
 

@@ -1,4 +1,4 @@
-package br.eti.rdchaves.bancodehorasxlsexporter;
+package br.eti.rdchaves.bancodehorasxlsexporter.control.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import br.eti.rdchaves.bancodehorasxlsexporter.R;
+import br.eti.rdchaves.bancodehorasxlsexporter.control.fragment.NavigationDrawerFragment;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {

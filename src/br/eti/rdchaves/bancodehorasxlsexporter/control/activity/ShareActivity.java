@@ -1,4 +1,4 @@
-package br.eti.rdchaves.bancodehorasxlsexporter;
+package br.eti.rdchaves.bancodehorasxlsexporter.control.activity;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -9,10 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 
-import rodrigo.chaves.hoursbankconverter.exporter.ExcelConverter;
-import rodrigo.chaves.hoursbankconverter.reader.impl.LineSplitReader;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -20,7 +17,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.widget.Toast;
+import br.eti.rdchaves.bancodehorasxlsexporter.business.converter.impl.ExcelConverter;
 import br.eti.rdchaves.bancodehorasxlsexporter.business.exception.CSVReadFailException;
+import br.eti.rdchaves.bancodehorasxlsexporter.business.reader.impl.LineSplitReader;
 
 public class ShareActivity extends Activity {
 

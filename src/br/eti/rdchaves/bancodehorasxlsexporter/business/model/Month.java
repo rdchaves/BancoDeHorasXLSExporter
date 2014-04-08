@@ -1,4 +1,4 @@
-package rodrigo.chaves.hoursbankconverter.model;
+package br.eti.rdchaves.bancodehorasxlsexporter.business.model;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package rodrigo.chaves.hoursbankconverter.exporter;
+package br.eti.rdchaves.bancodehorasxlsexporter.business.converter.impl;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,8 +29,9 @@ import jxl.write.biff.RowsExceededException;
 
 import org.apache.commons.lang3.time.DateUtils;
 
-import rodrigo.chaves.hoursbankconverter.model.Day;
-import rodrigo.chaves.hoursbankconverter.model.Month;
+import br.eti.rdchaves.bancodehorasxlsexporter.business.converter.Converter;
+import br.eti.rdchaves.bancodehorasxlsexporter.business.model.Day;
+import br.eti.rdchaves.bancodehorasxlsexporter.business.model.Month;
 
 
 public class ExcelConverter<T> implements Converter<T> {
