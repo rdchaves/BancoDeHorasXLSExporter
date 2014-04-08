@@ -10,4 +10,10 @@
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
     <string name="action_share">Converter para XLS</string>
+    <string name="excel_mime_type">application/vnd.ms-excel</string>
+    <string name="csv_mime_type">text/csv</string>
+    <string name="message_intent_chooser">Como deseja compartilhar?</string>
+    <string name="message_no_csv_on_intent">Arquivo CSV não recebido</string>
+    <string name="message_incorrect_mime_type">Tipo de arquivo inválido: %1$s</string>
+    <string name="message_read_file_error">Falha na leitura do arquivo: formato incorreto</string>
 </resources>

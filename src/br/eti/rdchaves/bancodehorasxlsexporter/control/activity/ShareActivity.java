@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.widget.Toast;
+import br.eti.rdchaves.bancodehorasxlsexporter.R;
 import br.eti.rdchaves.bancodehorasxlsexporter.business.converter.impl.ExcelConverter;
 import br.eti.rdchaves.bancodehorasxlsexporter.business.exception.CSVReadFailException;
 import br.eti.rdchaves.bancodehorasxlsexporter.business.reader.impl.LineSplitReader;
@@ -27,6 +28,7 @@ public class ShareActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
+		finish();
 
 		// Get intent, action and MIME type
 		Intent sourceIntent = getIntent();
@@ -35,7 +37,7 @@ public class ShareActivity extends Activity {
 		Uri uri = sourceIntent.getParcelableExtra(Intent.EXTRA_STREAM);
 
 		if (uri != null) {
-			if (Intent.ACTION_SEND.equals(action) && (type != null) && "text/csv".equals(type)) {
+			if (Intent.ACTION_SEND.equals(action) && (type != null) && getString(R.string.csv_mime_type).equals(type)) {
 				try {
 
 					File targetFile = convertFile(uri);
@@ -43,19 +45,20 @@ public class ShareActivity extends Activity {
 
 					Intent targetIntent = new Intent(Intent.ACTION_SEND);
 					targetIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(targetFile));
+					targetIntent.putExtra(Intent.EXTRA_SUBJECT, "[Banco de Horas] ");
 					targetIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-					targetIntent.setType("application/vnd.ms-excel");
-					startActivity(Intent.createChooser(targetIntent, "Como deseja compartilhar?"));
+					targetIntent.setType(getString(R.string.excel_mime_type));
+					startActivity(Intent.createChooser(targetIntent, getString(R.string.message_intent_chooser)));
 				} catch (Exception e) {
-					Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG).show();
-					e.printStackTrace();
-					finish();
+					throw new RuntimeException(e);
 				}
 			} else {
-				Toast.makeText(getApplicationContext(), "Other files: " + type, Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), getString(R.string.message_incorrect_mime_type, type),
+						Toast.LENGTH_SHORT).show();
 			}
 		} else {
-			Toast.makeText(getApplicationContext(), "Arquivo CSV não recebido", Toast.LENGTH_LONG).show();
+			Toast.makeText(getApplicationContext(), getString(R.string.message_no_csv_on_intent), Toast.LENGTH_LONG)
+					.show();
 		}
 	}
 
@@ -71,7 +74,7 @@ public class ShareActivity extends Activity {
 					".xls"));
 			new ExcelConverter<Date>().convert(targetFile, checkpoints);
 		} catch (CSVReadFailException e) {
-			Toast.makeText(getApplicationContext(), "Falha na leitura do arquivo: formato incorreto", Toast.LENGTH_LONG)
+			Toast.makeText(getApplicationContext(), getString(R.string.message_read_file_error), Toast.LENGTH_LONG)
 					.show();
 			throw e;
 		} finally {

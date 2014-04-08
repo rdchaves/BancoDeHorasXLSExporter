@@ -120,18 +120,6 @@ public class ExcelConverter<T> implements Converter<T> {
 				}
 				row++;
 			}
-//			for (Day day : month.getDays()) {
-//				int column = 0;
-//				addDate(sheet, column++, row, day.getValue());
-//				for (Date checkpoint : day.getCheckpoints()) {
-//					if (column > lastColumn) {
-//						lastColumn = column;
-//						addTitle(sheet, column, 0);
-//					}
-//					addTime(sheet, column++, row, checkpoint);
-//				}
-//				row++;
-//			}
 
 			addTitle(sheet, lastColumn + 1, 0, "HORAS/DIA");
 			for (int i = 1; i < sheet.getRows(); i++) {
