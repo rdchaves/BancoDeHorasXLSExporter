@@ -28,8 +28,12 @@ public class ShareActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
-		finish();
+		setContentView(R.layout.activity_share);
+//		convertAndShare();
+//		finish();
+	}
 
+	private void convertAndShare() {
 		// Get intent, action and MIME type
 		Intent sourceIntent = getIntent();
 		String action = sourceIntent.getAction();
