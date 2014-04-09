@@ -1,6 +1,7 @@
 package br.eti.rdchaves.bancodehorasxlsexporter.business.exception;
 
-public class CSVReadFailException extends Exception {
+
+public class CSVReadFailException extends BancoDeHorasXLSExporterException {
 
 	private static final long serialVersionUID = 3783585288071324575L;
 
@@ -8,12 +9,12 @@ public class CSVReadFailException extends Exception {
 		super();
 	}
 
-	public CSVReadFailException(String detailMessage, Throwable throwable) {
-		super(detailMessage, throwable);
+	public CSVReadFailException(int resId, Throwable throwable) {
+		super(resId, throwable);
 	}
 
-	public CSVReadFailException(String detailMessage) {
-		super(detailMessage);
+	public CSVReadFailException(int resId) {
+		super(resId);
 	}
 
 	public CSVReadFailException(Throwable throwable) {

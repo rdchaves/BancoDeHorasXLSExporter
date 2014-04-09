@@ -40,10 +40,10 @@ public class LineSplitReader implements Reader<Date> {
 				}
 			}
 			if (dates.size() == 0) {
-				throw new CSVReadFailException(context.getString(R.string.message_empty_file_error));
+				throw new CSVReadFailException(R.string.message_empty_file_error);
 			}
 		} catch (Exception e) {
-			throw new CSVReadFailException(context.getString(R.string.message_read_file_error), e);
+			throw new CSVReadFailException(R.string.message_read_file_error, e);
 		} finally {
 			IOUtils.closeQuietly(reader);
 		}
