@@ -16,9 +16,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
@@ -82,6 +82,8 @@ public class ShareActivity extends Activity {
 					targetIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 					targetIntent.setType(getString(R.string.excel_mime_type));
 					startActivity(Intent.createChooser(targetIntent, getString(R.string.message_intent_chooser)));
+				} catch (CSVReadFailException e) {
+					Log.e(getClass().getName(), e.getMessage(), e);
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}
@@ -95,8 +97,7 @@ public class ShareActivity extends Activity {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
-	private File convertFile(Uri uri) throws FileNotFoundException, Exception {
+	private File convertFile(Uri uri) throws FileNotFoundException, CSVReadFailException, Exception {
 		Reader reader = null;
 		File targetFile = null;
 		try {
@@ -110,8 +111,7 @@ public class ShareActivity extends Activity {
 			targetFile = new File(dir, uri.getLastPathSegment().replace(".csv", ".xls"));
 			new ExcelConverter<Date>().convert(targetFile, checkpoints);
 		} catch (CSVReadFailException e) {
-			Toast.makeText(getApplicationContext(), getString(R.string.message_read_file_error), Toast.LENGTH_LONG)
-					.show();
+			Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
 			throw e;
 		} finally {
 			IOUtils.closeQuietly(reader);
@@ -124,12 +124,4 @@ public class ShareActivity extends Activity {
 		return new File(getCacheDir(), getString(R.string.provider_shared_directory));
 	}
 
-	/** Checks if external storage is available for read and write */
-	private boolean isExternalStorageWritable() {
-		String state = Environment.getExternalStorageState();
-		if (Environment.MEDIA_MOUNTED.equals(state)) {
-			return true;
-		}
-		return false;
-	}
 }
