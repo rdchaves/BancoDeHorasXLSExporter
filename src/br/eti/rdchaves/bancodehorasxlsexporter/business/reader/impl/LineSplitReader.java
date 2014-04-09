@@ -42,6 +42,8 @@ public class LineSplitReader implements Reader<Date> {
 			if (dates.size() == 0) {
 				throw new CSVReadFailException(R.string.message_empty_file_error);
 			}
+		} catch (CSVReadFailException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new CSVReadFailException(R.string.message_read_file_error, e);
 		} finally {
