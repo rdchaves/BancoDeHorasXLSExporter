@@ -11,7 +11,7 @@ import java.util.TimeZone;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 
-import android.content.res.Resources;
+import android.content.Context;
 import br.eti.rdchaves.bancodehorasxlsexporter.R;
 import br.eti.rdchaves.bancodehorasxlsexporter.business.exception.CSVReadFailException;
 import br.eti.rdchaves.bancodehorasxlsexporter.business.reader.Reader;
@@ -21,7 +21,7 @@ public class LineSplitReader implements Reader<Date> {
 	private static final String FORMATO_DATA = "dd/MM/yyyy HH:mm:ss";
 	
 	@Override
-	public List<Date> read(java.io.Reader reader, String separator) throws CSVReadFailException {
+	public List<Date> read(Context context, java.io.Reader reader, String separator) throws CSVReadFailException {
 		List<Date> dates = new ArrayList<Date>();
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat(FORMATO_DATA, Locale.getDefault());
@@ -40,10 +40,10 @@ public class LineSplitReader implements Reader<Date> {
 				}
 			}
 			if (dates.size() == 0) {
-				throw new CSVReadFailException(Resources.getSystem().getString(R.string.message_empty_file_error));
+				throw new CSVReadFailException(context.getString(R.string.message_empty_file_error));
 			}
 		} catch (Exception e) {
-			throw new CSVReadFailException(Resources.getSystem().getString(R.string.message_read_file_error), e);
+			throw new CSVReadFailException(context.getString(R.string.message_read_file_error), e);
 		} finally {
 			IOUtils.closeQuietly(reader);
 		}

@@ -13,6 +13,7 @@ import org.apache.commons.io.IOUtils;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -67,6 +68,7 @@ public class ShareActivity extends Activity {
 		String type = sourceIntent.getType();
 		Uri uri = sourceIntent.getParcelableExtra(Intent.EXTRA_STREAM);
 
+		Context context = getApplicationContext();
 		if (uri != null) {
 			if (Intent.ACTION_SEND.equals(action) && (type != null) && getString(R.string.csv_mime_type).equals(type)) {
 				try {
@@ -74,7 +76,7 @@ public class ShareActivity extends Activity {
 					File targetFile = convertFile(uri);
 					targetFile.deleteOnExit();
 
-					Uri targetUri = FileProvider.getUriForFile(getApplicationContext(),
+					Uri targetUri = FileProvider.getUriForFile(context,
 							getString(R.string.provider_authorities), targetFile);
 					Intent targetIntent = new Intent(Intent.ACTION_SEND);
 					targetIntent.putExtra(Intent.EXTRA_STREAM, targetUri);
@@ -88,11 +90,11 @@ public class ShareActivity extends Activity {
 					throw new RuntimeException(e);
 				}
 			} else {
-				Toast.makeText(getApplicationContext(), getString(R.string.message_incorrect_mime_type, type),
+				Toast.makeText(context, getString(R.string.message_incorrect_mime_type, type),
 						Toast.LENGTH_SHORT).show();
 			}
 		} else {
-			Toast.makeText(getApplicationContext(), getString(R.string.message_no_csv_on_intent), Toast.LENGTH_LONG)
+			Toast.makeText(context, getString(R.string.message_no_csv_on_intent), Toast.LENGTH_LONG)
 					.show();
 		}
 	}
@@ -100,18 +102,19 @@ public class ShareActivity extends Activity {
 	private File convertFile(Uri uri) throws FileNotFoundException, CSVReadFailException, Exception {
 		Reader reader = null;
 		File targetFile = null;
+		Context context = getApplicationContext();
 		try {
 
 			ParcelFileDescriptor parcelFileDescriptor = getContentResolver().openFileDescriptor(uri, "r");
 			FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
 			reader = new FileReader(fileDescriptor);
-			List<Date> checkpoints = new LineSplitReader().read(reader, ",");
+			List<Date> checkpoints = new LineSplitReader().read(context, reader, ",");
 			File dir = getDir();
 			dir.mkdirs();
 			targetFile = new File(dir, uri.getLastPathSegment().replace(".csv", ".xls"));
 			new ExcelConverter<Date>().convert(targetFile, checkpoints);
 		} catch (CSVReadFailException e) {
-			Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+			Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
 			throw e;
 		} finally {
 			IOUtils.closeQuietly(reader);
