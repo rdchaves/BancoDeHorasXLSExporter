@@ -78,7 +78,7 @@ public class ShareActivity extends Activity {
 							getString(R.string.provider_authorities), targetFile);
 					Intent targetIntent = new Intent(Intent.ACTION_SEND);
 					targetIntent.putExtra(Intent.EXTRA_STREAM, targetUri);
-					targetIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.intent_subject));
+					targetIntent.putExtra(Intent.EXTRA_SUBJECT, targetFile.getName());
 					targetIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 					targetIntent.setType(getString(R.string.excel_mime_type));
 					startActivity(Intent.createChooser(targetIntent, getString(R.string.message_intent_chooser)));
