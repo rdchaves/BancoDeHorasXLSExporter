@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -45,6 +46,6 @@ public class Month {
 
 	@Override
 	public String toString() {
-		return new SimpleDateFormat("MM-yyyy").format(this.value);
+		return new SimpleDateFormat("MM-yyyy", Locale.getDefault()).format(this.value);
 	}
 }

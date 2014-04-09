@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Banco de Horas XLS Exporter</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_example">Example action</string>
+<!--     <string name="action_example">Example action</string> -->
     <string name="action_settings">Settings</string>
     <string name="action_share">Converter para XLS</string>
     <string name="excel_mime_type">application/vnd.ms-excel</string>
@@ -16,5 +15,7 @@
     <string name="message_no_csv_on_intent">Arquivo CSV não recebido</string>
     <string name="message_incorrect_mime_type">Tipo de arquivo inválido: %1$s</string>
     <string name="message_read_file_error">Falha na leitura do arquivo: formato incorreto</string>
-    <string name="message_progress_screen">Convertendo arquivo...</string>
+    <string name="message_progress_screen">Convertendo arquivo&#8230;</string>
+    <string name="provider_authorities">br.eti.rdchaves.bancodehorasexporter.provider</string>
+    <string name="provider_shared_directory">converted</string>
 </resources>

@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.commons.io.IOUtils;
@@ -21,7 +22,7 @@ public class LineSplitReader implements Reader<Date> {
 	public List<Date> read(java.io.Reader reader, String separator) throws Exception {
 		List<Date> dates = new ArrayList<Date>();
 		try {
-			SimpleDateFormat sdf = new SimpleDateFormat(FORMATO_DATA);
+			SimpleDateFormat sdf = new SimpleDateFormat(FORMATO_DATA, Locale.getDefault());
 			sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 			LineIterator it = IOUtils.lineIterator(reader);
 			while(it.hasNext()) {

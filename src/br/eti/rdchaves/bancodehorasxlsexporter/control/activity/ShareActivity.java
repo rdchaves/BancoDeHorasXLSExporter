@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.Reader;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,6 +18,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
+import android.support.v4.content.FileProvider;
+import android.view.MotionEvent;
+import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
 import br.eti.rdchaves.bancodehorasxlsexporter.R;
 import br.eti.rdchaves.bancodehorasxlsexporter.business.converter.impl.ExcelConverter;
@@ -28,9 +33,31 @@ public class ShareActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
+
+		// Make us non-modal, so that others can receive touch events...
+		getWindow().setFlags(LayoutParams.FLAG_NOT_TOUCH_MODAL, LayoutParams.FLAG_NOT_TOUCH_MODAL);
+
+		// ...but notify us that it happened.
+		getWindow().setFlags(LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
+
 		setContentView(R.layout.activity_share);
-//		convertAndShare();
-//		finish();
+
+		convertAndShare();
+
+		finish();
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+
+		// If we've received a touch notification that the user has touched
+		// outside the app, does nothing.
+		if (MotionEvent.ACTION_OUTSIDE == event.getAction()) {
+			return true;
+		}
+
+		// Delegate everything else to Activity.
+		return super.onTouchEvent(event);
 	}
 
 	private void convertAndShare() {
@@ -47,9 +74,11 @@ public class ShareActivity extends Activity {
 					File targetFile = convertFile(uri);
 					targetFile.deleteOnExit();
 
+					Uri targetUri = FileProvider.getUriForFile(getApplicationContext(),
+							getString(R.string.provider_authorities), targetFile);
 					Intent targetIntent = new Intent(Intent.ACTION_SEND);
-					targetIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(targetFile));
-					targetIntent.putExtra(Intent.EXTRA_SUBJECT, "[Banco de Horas] ");
+					targetIntent.putExtra(Intent.EXTRA_STREAM, targetUri);
+					targetIntent.putExtra(Intent.EXTRA_SUBJECT, "[Banco de Horas]");
 					targetIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 					targetIntent.setType(getString(R.string.excel_mime_type));
 					startActivity(Intent.createChooser(targetIntent, getString(R.string.message_intent_chooser)));
@@ -66,16 +95,19 @@ public class ShareActivity extends Activity {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private File convertFile(Uri uri) throws FileNotFoundException, Exception {
 		Reader reader = null;
 		File targetFile = null;
 		try {
+
 			ParcelFileDescriptor parcelFileDescriptor = getContentResolver().openFileDescriptor(uri, "r");
 			FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
 			reader = new FileReader(fileDescriptor);
 			List<Date> checkpoints = new LineSplitReader().read(reader, ",");
-			targetFile = new File(Environment.getExternalStorageDirectory(), uri.getLastPathSegment().replace(".csv",
-					".xls"));
+			File dir = getDir();
+			dir.mkdirs();
+			targetFile = new File(dir, uri.getLastPathSegment().replace(".csv", ".xls"));
 			new ExcelConverter<Date>().convert(targetFile, checkpoints);
 		} catch (CSVReadFailException e) {
 			Toast.makeText(getApplicationContext(), getString(R.string.message_read_file_error), Toast.LENGTH_LONG)
@@ -87,8 +119,13 @@ public class ShareActivity extends Activity {
 		return targetFile;
 	}
 
+	private File getDir() throws XmlPullParserException, IOException {
+
+		return new File(getCacheDir(), getString(R.string.provider_shared_directory));
+	}
+
 	/** Checks if external storage is available for read and write */
-	public boolean isExternalStorageWritable() {
+	private boolean isExternalStorageWritable() {
 		String state = Environment.getExternalStorageState();
 		if (Environment.MEDIA_MOUNTED.equals(state)) {
 			return true;
