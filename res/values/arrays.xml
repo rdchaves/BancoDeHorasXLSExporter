@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="operation">
+        <item name="send">Enviar</item>
+        <item name="edit">Editar</item>
+        <item name="view">Visualizar</item>
+    </string-array>
+    <string-array name="operationValues">
+        <item name="send">@string/value_settings_operation_send</item>
+        <item name="edit">@string/value_settings_operation_edit</item>
+        <item name="view">@string/value_settings_operation_view</item>
+    </string-array>
+
+</resources>

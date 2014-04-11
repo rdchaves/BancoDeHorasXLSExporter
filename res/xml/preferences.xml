@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <ListPreference
+        android:defaultValue="@string/value_settings_operation_send"
+        android:entries="@array/operation"
+        android:entryValues="@array/operationValues"
+        android:key="operation"
+        android:summary="@string/summary_operation_send"
+        android:title="@string/title_settings_operation" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="send_both_files"
+        android:shouldDisableView="true"
+        android:summary="@string/summary_send_only_xls"
+        android:title="@string/title_settings_send_both_files" />
+
+</PreferenceScreen>

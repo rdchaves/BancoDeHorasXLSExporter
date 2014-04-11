@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,9 +16,12 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
+import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -27,6 +31,7 @@ import br.eti.rdchaves.bancodehorasxlsexporter.R;
 import br.eti.rdchaves.bancodehorasxlsexporter.business.converter.impl.ExcelConverter;
 import br.eti.rdchaves.bancodehorasxlsexporter.business.exception.CSVReadFailException;
 import br.eti.rdchaves.bancodehorasxlsexporter.business.reader.impl.LineSplitReader;
+import br.eti.rdchaves.bancodehorasxlsexporter.control.fragment.SettingsFragment;
 
 public class ShareActivity extends Activity {
 
@@ -66,37 +71,66 @@ public class ShareActivity extends Activity {
 		Intent sourceIntent = getIntent();
 		String action = sourceIntent.getAction();
 		String type = sourceIntent.getType();
-		Uri uri = sourceIntent.getParcelableExtra(Intent.EXTRA_STREAM);
+		Uri sourceUri = sourceIntent.getParcelableExtra(Intent.EXTRA_STREAM);
 
 		Context context = getApplicationContext();
-		if (uri != null) {
-			if (Intent.ACTION_SEND.equals(action) && (type != null) && getString(R.string.csv_mime_type).equals(type)) {
+		if (sourceUri != null) {
+			String csvMimeType = getString(R.string.csv_mime_type);
+			if (Intent.ACTION_SEND.equals(action) && (type != null) && csvMimeType.equals(type)) {
 				try {
 
-					File targetFile = convertFile(uri);
-					targetFile.deleteOnExit();
+					File targetFile = convertFile(sourceUri);
 
-					Uri targetUri = FileProvider.getUriForFile(context,
-							getString(R.string.provider_authorities), targetFile);
-					Intent targetIntent = new Intent(Intent.ACTION_SEND);
-					targetIntent.putExtra(Intent.EXTRA_STREAM, targetUri);
+					String excelMimeType = getString(R.string.excel_mime_type);
+					Uri targetUri = FileProvider.getUriForFile(context, getString(R.string.provider_authorities),
+							targetFile);
+					Intent targetIntent = new Intent(getTargetAction());
+					if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
+							SettingsFragment.KEY_SEND_BOTH_FILES, false)) {
+						ArrayList<Parcelable> files = new ArrayList<Parcelable>();
+						files.add(sourceUri);
+						files.add(targetUri);
+						targetIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
+						targetIntent.setType(csvMimeType + "," + excelMimeType);
+					} else {
+						targetIntent.putExtra(Intent.EXTRA_STREAM, targetUri);
+						targetIntent.setType(excelMimeType);
+					}
 					targetIntent.putExtra(Intent.EXTRA_SUBJECT, targetFile.getName());
 					targetIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-					targetIntent.setType(getString(R.string.excel_mime_type));
-					startActivity(Intent.createChooser(targetIntent, getString(R.string.message_intent_chooser)));
+					startActivity(targetIntent);
 				} catch (CSVReadFailException e) {
 					Log.e(getClass().getName(), e.getMessage(), e);
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}
 			} else {
-				Toast.makeText(context, getString(R.string.message_incorrect_mime_type, type),
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(context, getString(R.string.message_incorrect_mime_type, type), Toast.LENGTH_SHORT)
+						.show();
 			}
 		} else {
-			Toast.makeText(context, getString(R.string.message_no_csv_on_intent), Toast.LENGTH_LONG)
-					.show();
+			Toast.makeText(context, getString(R.string.message_no_csv_on_intent), Toast.LENGTH_LONG).show();
 		}
+	}
+
+	private String getTargetAction() {
+		
+		String action = null;
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		String sendOperation = getString(R.string.value_settings_operation_send);
+		String operation = preferences.getString(SettingsFragment.KEY_OPERATION, sendOperation);
+		if (sendOperation.equals(operation)) {
+			if (preferences.getBoolean(SettingsFragment.KEY_SEND_BOTH_FILES, false)) {
+				action = Intent.ACTION_SEND_MULTIPLE;
+			} else {
+				action = Intent.ACTION_SEND;
+			}
+		} else if (getString(R.string.value_settings_operation_edit).equals(operation)){
+			action = Intent.ACTION_EDIT;
+		} else {
+			action = Intent.ACTION_VIEW;
+		}
+		return action;
 	}
 
 	private File convertFile(Uri uri) throws FileNotFoundException, CSVReadFailException, Exception {
