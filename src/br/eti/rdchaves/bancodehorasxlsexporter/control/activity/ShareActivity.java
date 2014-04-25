@@ -80,10 +80,10 @@ public class ShareActivity extends Activity {
 				try {
 
 					File targetFile = convertFile(sourceUri);
-
-					String excelMimeType = getString(R.string.excel_mime_type);
+					
 					Uri targetUri = FileProvider.getUriForFile(context, getString(R.string.provider_authorities),
 							targetFile);
+					
 					Intent targetIntent = new Intent(getTargetAction());
 					if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
 							SettingsFragment.KEY_SEND_BOTH_FILES, false)) {
@@ -91,12 +91,19 @@ public class ShareActivity extends Activity {
 						files.add(sourceUri);
 						files.add(targetUri);
 						targetIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
-						targetIntent.setType(csvMimeType + "," + excelMimeType);
+						targetIntent.setType("*/*");
 					} else {
+						String excelMimeType = /*MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+								MimeTypeMap.getFileExtensionFromUrl(targetUri.toString()));
+						if (excelMimeType == null) {
+							excelMimeType = */getString(R.string.excel_mime_type);
+//						}
+						
 						targetIntent.putExtra(Intent.EXTRA_STREAM, targetUri);
 						targetIntent.setType(excelMimeType);
 					}
-					targetIntent.putExtra(Intent.EXTRA_SUBJECT, targetFile.getName());
+					targetIntent.putExtra(Intent.EXTRA_SUBJECT, sourceIntent.getStringExtra(Intent.EXTRA_SUBJECT));
+					targetIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_text));
 					targetIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 					startActivity(targetIntent);
 				} catch (CSVReadFailException e) {
